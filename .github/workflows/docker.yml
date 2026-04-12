@@ -1,3 +1,5 @@
+# Publishes to Docker Hub. Image name = YOUR GitHub user + /subconverter when run on your fork.
+# If Actions runs on the upstream repo (e.g. a PR there), repository_owner is the upstream user — set secret DOCKER_REGISTRY_IMAGE=your-dockerhub-user/subconverter to push to your Hub instead, or only run this workflow on your fork.
 name: Publish Docker Image
 on: 
   push:
@@ -10,7 +12,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  REGISTRY_IMAGE: asdlokj1qpi23/subconverter
+  # Prefer secret DOCKER_REGISTRY_IMAGE (e.g. harvyyou/subconverter) so push always targets your Docker Hub namespace even if the workflow file runs on upstream. Otherwise use the repo owner (correct on your fork).
+  REGISTRY_IMAGE: ${{ secrets.DOCKER_REGISTRY_IMAGE != '' && secrets.DOCKER_REGISTRY_IMAGE || format('{0}/subconverter', github.repository_owner) }}
 
 jobs:
   build:
@@ -59,7 +62,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Get commit SHA
-        if: github.ref == 'refs/heads/master'
         id: vars
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
@@ -68,7 +70,8 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           platforms: ${{ matrix.platform }}
-          context: scripts/
+          context: .
+          file: scripts/Dockerfile
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             SHA=${{ steps.vars.outputs.sha_short }}
@@ -127,4 +130,4 @@ jobs:
 
       - name: Inspect image
         run: |
-          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:${{ steps.meta.outputs.version }}
+          docker buildx imagetools inspect ${{ env.REGISTRY_IMAGE }}:latest
