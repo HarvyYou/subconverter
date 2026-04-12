@@ -1,0 +1,12 @@
+.git
+.github
+.gitignore
+.cursor
+*.md
+LICENSE
+build
+cmake-build-*
+CMakeCache.txt
+CMakeFiles
+compile_commands.json
+.dockerignore

@@ -1,5 +1,5 @@
-# Publishes to Docker Hub. Image name = YOUR GitHub user + /subconverter when run on your fork.
-# If Actions runs on the upstream repo (e.g. a PR there), repository_owner is the upstream user — set secret DOCKER_REGISTRY_IMAGE=your-dockerhub-user/subconverter to push to your Hub instead, or only run this workflow on your fork.
+# Publishes to Docker Hub. Image: docker.io/<lowercase GitHub owner>/subconverter (Docker Hub requires lowercase; use full docker.io/ host to avoid HarvYou/repo being parsed as host "HarvYou").
+# Optional: set secret DOCKER_REGISTRY_IMAGE to e.g. harvyyou/subconverter (no docker.io/ needed) to override.
 name: Publish Docker Image
 on: 
   push:
@@ -10,10 +10,6 @@ on:
 concurrency: 
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
-
-env:
-  # Prefer secret DOCKER_REGISTRY_IMAGE (e.g. harvyyou/subconverter) so push always targets your Docker Hub namespace even if the workflow file runs on upstream. Otherwise use the repo owner (correct on your fork).
-  REGISTRY_IMAGE: ${{ secrets.DOCKER_REGISTRY_IMAGE != '' && secrets.DOCKER_REGISTRY_IMAGE || format('{0}/subconverter', github.repository_owner) }}
 
 jobs:
   build:
@@ -40,6 +36,25 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Docker Hub image name (docker.io + lowercase)
+        env:
+          OVERRIDE: ${{ secrets.DOCKER_REGISTRY_IMAGE }}
+        run: |
+          set -e
+          if [ -n "$OVERRIDE" ]; then
+            img="$OVERRIDE"
+            case "$img" in
+              docker.io/*|ghcr.io/*) ;;
+              *) img="docker.io/$img" ;;
+            esac
+          else
+            owner_lc=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')
+            img="docker.io/${owner_lc}/subconverter"
+          fi
+          echo "REGISTRY_IMAGE=$img" >> "$GITHUB_ENV"
+          echo "Using REGISTRY_IMAGE=$img"
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -97,6 +112,24 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Docker Hub image name (docker.io + lowercase)
+        env:
+          OVERRIDE: ${{ secrets.DOCKER_REGISTRY_IMAGE }}
+        run: |
+          set -e
+          if [ -n "$OVERRIDE" ]; then
+            img="$OVERRIDE"
+            case "$img" in
+              docker.io/*|ghcr.io/*) ;;
+              *) img="docker.io/$img" ;;
+            esac
+          else
+            owner_lc=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')
+            img="docker.io/${owner_lc}/subconverter"
+          fi
+          echo "REGISTRY_IMAGE=$img" >> "$GITHUB_ENV"
+          echo "Using REGISTRY_IMAGE=$img"
+
       - name: Download digests
         uses: actions/download-artifact@v4
         with:

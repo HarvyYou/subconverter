@@ -19,8 +19,10 @@
 
    | Name | 值 |
    |------|-----|
-   | `DOCKER_USERNAME` | 你的 Docker Hub 用户名（需与镜像前缀一致，例如 `harvyyou`） |
+   | `DOCKER_USERNAME` | 你的 Docker Hub 用户名（**小写**，与 Hub 上一致，例如 `harvyyou`） |
    | `DOCKER_PASSWORD` | Docker Hub **密码**或 **[Access Token](https://hub.docker.com/settings/security)**（推荐 Token） |
+
+   可选：`DOCKER_REGISTRY_IMAGE` — 若填写，则推送到该镜像名（如 `harvyyou/subconverter`）；不填则使用 `docker.io/<GitHub 用户名小写>/subconverter`。工作流会统一加上 `docker.io/` 前缀并把用户名转为**小写**，避免 `Harvyyou/subconverter` 被误解析成主机名 `Harvyyou` 导致 DNS 失败。
 
    保存后，工作流里的 `docker/login-action` 会用它们登录并推送。
 
