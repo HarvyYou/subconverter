@@ -1,9 +1,15 @@
 🎯 全球直连,rules/LocalAreaNetwork.list
 Ⓜ️ 微软服务,rules/MSServices.list
 🎯 全球直连,rules/DivineEngine/Surge/Ruleset/Unbreak.list
-🛑 全球拦截,rules/NobyDa/Surge/AdRule.list
-🛑 全球拦截,rules/DivineEngine/Surge/Ruleset/Guard/Hijacking.list
-;🎥 NETFLIX,rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/Netflix.list
+; 默认关闭：取消行首分号以启用（源文件仍保留在 base/rules）
+;🛑 全球拦截,rules/NobyDa/Surge/AdRule.list
+;🛑 全球拦截,rules/DivineEngine/Surge/Ruleset/Guard/Hijacking.list
+🎥 NETFLIX,rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/Netflix.list
+🎥 Disney+,rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/DisneyPlus.list
+🎥 HBO,rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/HBO.list
+🎥 HBO Asia,rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/HBO-Asia.list
+🎥 Prime Video,rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/Prime-Video.list
+🤖 AI 服务,rules/AI_Services.list
 🌍 国外媒体,rules/DivineEngine/Surge/Ruleset/StreamingMedia/Streaming.list
 🌏 国内媒体,rules/lhie1/Surge/Surge 3/Provider/Media/Bilibili.list
 🌏 国内媒体,rules/lhie1/Surge/Surge 3/Provider/Media/iQiyi.list

@@ -1,8 +1,13 @@
-⛔️ 广告拦截,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Advertising.list
-🚫 运营劫持,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Hijacking.list
-🌌 YouTube,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/StreamingMedia/Video/YouTube.list
+; 默认关闭：取消行首分号以启用
+;⛔️ 广告拦截,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Advertising.list
+;🚫 运营劫持,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Guard/Hijacking.list
 🎥 NETFLIX,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/StreamingMedia/Video/Netflix.list
-HBO,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Media/HBO.list
+🎥 Disney+,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/StreamingMedia/Video/DisneyPlus.list
+🎥 HBO,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/StreamingMedia/Video/HBO.list
+🎥 HBO Asia,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/StreamingMedia/Video/HBO-Asia.list
+🎥 Prime Video,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/StreamingMedia/Video/Prime-Video.list
+;🤖 AI 服务 — 无 DivineEngine 官方远程列表，请使用仓库内 rules/AI_Services.list
+🌌 YouTube,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/StreamingMedia/Video/YouTube.list
 Fox,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/Media/Fox.list
 🌍 国外媒体,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/StreamingMedia/Streaming.list
 🌏 港台媒体,https://raw.githubusercontent.com/DivineEngine/Profiles/master/Surge/Ruleset/StreamingMedia/StreamingSE.list

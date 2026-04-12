@@ -21,19 +21,75 @@ rule = [
 ]
 
 [[custom_groups]]
-name = "⛔️ 广告拦截"
+name = "🎥 Disney+"
 type = "select"
-rule = ["[]🛑 全球拦截",
-"[]🎯 全球直连",
-"[]🔰 节点选择"
+rule = [
+    "[]🔰 节点选择",
+    "[]♻️ 自动选择",
+    "[]🎯 全球直连",
+    ".*"
 ]
 
 [[custom_groups]]
-name = "🚫 运营劫持"
+name = "🎥 HBO"
 type = "select"
-rule = ["[]🛑 全球拦截",
-"[]🎯 全球直连",
-"[]🔰 节点选择"]
+rule = [
+    "[]🔰 节点选择",
+    "[]♻️ 自动选择",
+    "[]🎯 全球直连",
+    ".*"
+]
+
+[[custom_groups]]
+name = "🎥 HBO Asia"
+type = "select"
+rule = [
+    "[]🔰 节点选择",
+    "[]♻️ 自动选择",
+    "[]🎯 全球直连",
+    ".*"
+]
+
+[[custom_groups]]
+name = "🎥 Prime Video"
+type = "select"
+rule = [
+    "[]🔰 节点选择",
+    "[]♻️ 自动选择",
+    "[]🎯 全球直连",
+    ".*"
+]
+
+[[custom_groups]]
+name = "🤖 AI 服务"
+type = "select"
+rule = [
+    "[]🔰 节点选择",
+    "[]♻️ 自动选择",
+    "[]🎯 全球直连",
+    ".*"
+]
+
+# 以下策略组与广告 / 劫持规则集对应，默认不启用；若恢复上方 rulesets 中注释块，可一并取消注释。
+# [[custom_groups]]
+# name = "⛔️ 广告拦截"
+# type = "select"
+# rule = ["[]🛑 全球拦截",
+# "[]🎯 全球直连",
+# "[]🔰 节点选择"
+# ]
+#
+# [[custom_groups]]
+# name = "🚫 运营劫持"
+# type = "select"
+# rule = ["[]🛑 全球拦截",
+# "[]🎯 全球直连",
+# "[]🔰 节点选择"]
+#
+# [[custom_groups]]
+# name = "🛑 全球拦截"
+# type = "select"
+# rule = ["[]REJECT", "[]DIRECT"]
 
 [[custom_groups]]
 name = "🌍 国外媒体"
@@ -76,11 +132,6 @@ rule = ["[]🔰 节点选择",
 name = "🎯 全球直连"
 type = "select"
 rule = ["[]DIRECT"]
-
-[[custom_groups]]
-name = "🛑 全球拦截"
-type = "select"
-rule = ["[]REJECT", "[]DIRECT"]
 
 [[custom_groups]]
 name = "🐟 漏网之鱼"
