@@ -10,17 +10,38 @@ ruleset = "rules/MSServices.list"
 group = "🎯 全球直连"
 ruleset = "rules/DivineEngine/Surge/Ruleset/Unbreak.list"
 
-[[rulesets]]
-group = "🛑 全球拦截"
-ruleset = "rules/NobyDa/Surge/AdRule.list"
-
-[[rulesets]]
-group = "🛑 全球拦截"
-ruleset = "rules/DivineEngine/Surge/Ruleset/Guard/Hijacking.list"
+# 以下规则集默认不启用（广告 / 运营劫持）；需要时去掉每行开头的 # 即可。勿删 base/rules 内对应 .list 源文件。
+# [[rulesets]]
+# group = "🛑 全球拦截"
+# ruleset = "rules/NobyDa/Surge/AdRule.list"
+#
+# [[rulesets]]
+# group = "🛑 全球拦截"
+# ruleset = "rules/DivineEngine/Surge/Ruleset/Guard/Hijacking.list"
 
 [[rulesets]]
 group = "🎥 NETFLIX"
 ruleset = "rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/Netflix.list"
+
+[[rulesets]]
+group = "🎥 Disney+"
+ruleset = "rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/DisneyPlus.list"
+
+[[rulesets]]
+group = "🎥 HBO"
+ruleset = "rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/HBO.list"
+
+[[rulesets]]
+group = "🎥 HBO Asia"
+ruleset = "rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/HBO-Asia.list"
+
+[[rulesets]]
+group = "🎥 Prime Video"
+ruleset = "rules/DivineEngine/Surge/Ruleset/StreamingMedia/Video/Prime-Video.list"
+
+[[rulesets]]
+group = "🤖 AI 服务"
+ruleset = "rules/AI_Services.list"
 
 [[rulesets]]
 group = "🌍 国外媒体"
