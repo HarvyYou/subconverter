@@ -46,6 +46,36 @@ bool isNumeric(const std::string &str) {
     return true;
 }
 
+bool isIntegerString(const std::string &str) {
+    if (str.empty())
+        return false;
+
+    size_t start = str[0] == '-' ? 1 : 0;
+    if (start == str.size())
+        return false;
+
+    for (size_t i = start; i < str.size(); i++) {
+        if (!std::isdigit(static_cast<unsigned char>(str[i]))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+YAML::Node yamlScalarFromString(const std::string &value) {
+    YAML::Node node;
+    if (value == "true") {
+        node = true;
+    } else if (value == "false") {
+        node = false;
+    } else if (isIntegerString(value)) {
+        node = to_int(value);
+    } else {
+        node = value;
+    }
+    return node;
+}
+
 
 std::string
 vmessLinkConstruct(const std::string &remarks, const std::string &add, const std::string &port, const std::string &type,
@@ -457,8 +487,6 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
                 }
                 break;
             case ProxyType::Snell:
-                if (x.SnellVersion >= 4)
-                    continue;
                 singleproxy["type"] = "snell";
                 singleproxy["psk"] = x.Password;
                 if (x.SnellVersion != 0)
@@ -688,6 +716,17 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
                         if (!x.Host.empty())
                             singleproxy["h2-opts"]["host"].push_back(x.Host);
                         break;
+                    case "xhttp"_hash:
+                        singleproxy["network"] = x.TransferProtocol;
+                        singleproxy["xhttp-opts"]["path"] = x.Path;
+                        if (!x.Host.empty())
+                            singleproxy["xhttp-opts"]["host"] = x.Host;
+                        for (const auto &option: x.XHTTPOptions) {
+                            singleproxy["xhttp-opts"][option.first] = yamlScalarFromString(option.second);
+                        }
+                        if (!x.Edge.empty())
+                            singleproxy["xhttp-opts"]["headers"]["Edge"] = x.Edge;
+                        break;
                     case "grpc"_hash:
                         singleproxy["network"] = x.TransferProtocol;
                         singleproxy["grpc-opts"]["grpc-mode"] = x.GRPCMode;
@@ -701,9 +740,8 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
                 continue;
         }
 
-        // UDP is not supported yet in clash using snell
-        // sees in https://dreamacro.github.io/clash/configuration/outbound.html#snell
-        if (udp && x.Type != ProxyType::Snell && x.Type != ProxyType::TUIC)
+        // Snell UDP is available in mihomo-compatible Snell v3+ nodes.
+        if (udp && (x.Type != ProxyType::Snell || x.SnellVersion >= 3) && x.Type != ProxyType::TUIC)
             singleproxy["udp"] = true;
         if (!clashR && !x.UnderlyingProxy.empty())
             singleproxy["dialer-proxy"] = x.UnderlyingProxy;
@@ -805,7 +843,7 @@ proxyToClash(std::vector<Proxy> &nodes, YAML::Node &yamlnode, const ProxyGroupCo
 }
 
 
-void formatterShortId(std::string &input) {
+std::string formatterShortId(std::string input) {
     std::string target = "short-id:";
     size_t startPos = input.find(target);
 
@@ -830,6 +868,7 @@ void formatterShortId(std::string &input) {
         // 继续查找下一个实例
         startPos = input.find(target, startPos + 1);
     }
+    return input;
 }
 
 std::string proxyToClash(std::vector<Proxy> &nodes, const std::string &base_conf,
@@ -848,7 +887,7 @@ std::string proxyToClash(std::vector<Proxy> &nodes, const std::string &base_conf
     proxyToClash(nodes, yamlnode, extra_proxy_group, clashR, ext);
 
     if (ext.nodelist)
-        return YAML::Dump(yamlnode);
+        return formatterShortId(YAML::Dump(yamlnode));
 
     /*
     if(ext.enable_rule_generator)
@@ -857,7 +896,7 @@ std::string proxyToClash(std::vector<Proxy> &nodes, const std::string &base_conf
     return YAML::Dump(yamlnode);
     */
     if (!ext.enable_rule_generator)
-        return YAML::Dump(yamlnode);
+        return formatterShortId(YAML::Dump(yamlnode));
 
     if (!ext.managed_config_prefix.empty() || ext.clash_script) {
         if (yamlnode["mode"].IsDefined()) {
@@ -869,7 +908,7 @@ std::string proxyToClash(std::vector<Proxy> &nodes, const std::string &base_conf
 
         renderClashScript(yamlnode, ruleset_content_array, ext.managed_config_prefix, ext.clash_script,
                           ext.overwrite_original_rules, ext.clash_classical_ruleset);
-        return YAML::Dump(yamlnode);
+        return formatterShortId(YAML::Dump(yamlnode));
     }
 
     std::string output_content = rulesetToClashStr(yamlnode, ruleset_content_array, ext.overwrite_original_rules,
@@ -879,8 +918,7 @@ std::string proxyToClash(std::vector<Proxy> &nodes, const std::string &base_conf
     //rulesetToClash(yamlnode, ruleset_content_array, ext.overwrite_original_rules, ext.clash_new_field_name);
     //std::string output_content = YAML::Dump(yamlnode);
     replaceAll(output_content, "!<str> ", "");
-    formatterShortId(output_content);
-    return output_content;
+    return formatterShortId(std::move(output_content));
 }
 
 void replaceAll(std::string &input, const std::string &search, const std::string &replace) {
@@ -1115,6 +1153,19 @@ std::string proxyToSurge(std::vector<Proxy> &nodes, const std::string &base_conf
                 if (!x.Ports.empty())
                     proxy += ",port-hopping=" + x.Ports;
                 break;
+            case ProxyType::AnyTLS:
+                if (surge_ver < 4)
+                    continue;
+                proxy = "anytls, " + hostname + ", " + port + ", password=" + password;
+                if (!x.SNI.empty())
+                    proxy += ", sni=" + x.SNI;
+                if (!scv.is_undef())
+                    proxy += ", skip-cert-verify=" + scv.get_str();
+                if (!x.Fingerprint.empty())
+                    proxy += ", server-cert-fingerprint-sha256=" + x.Fingerprint;
+                if (!tls13.is_undef())
+                    proxy += ", tls13=" + std::string(tls13 ? "true" : "false");
+                break;
             case ProxyType::WireGuard:
                 if (surge_ver < 4 && surge_ver != -3)
                     continue;
@@ -1345,7 +1396,7 @@ std::string proxyToSingle(std::vector<Proxy> &nodes, int types, extra_settings &
                     proxyStr += "&packet-encoding=" + packet_encoding;
                 }
                 if (!alpns.empty()) {
-                    proxyStr += "&alpn=" + alpns[0];
+                    proxyStr += "&alpn=" + urlEncode(join(alpns, ","));
                 }
                 if (!sni.empty()) {
                     proxyStr += "&sni=" + sni;
